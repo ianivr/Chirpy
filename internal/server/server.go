@@ -12,6 +12,8 @@ func NewServeMux() *http.ServeMux {
 func Start() error {
 	mux := NewServeMux()
 
+	mux.Handle("/", http.FileServer(http.Dir("./")))
+
 	newServer := &http.Server{
 		Addr:    ":8080",
 		Handler: mux,

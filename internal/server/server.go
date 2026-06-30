@@ -4,13 +4,8 @@ import (
 	"net/http"
 )
 
-func NewServeMux() *http.ServeMux {
-	mux := http.NewServeMux()
-	return mux
-}
-
 func Start() error {
-	mux := NewServeMux()
+	mux := http.NewServeMux()
 	apiCfg := &apiConfig{}
 
 	mux.Handle("/app/", apiCfg.middlewareMetricsInc(http.StripPrefix("/app", http.FileServer(http.Dir("./")))))
@@ -21,6 +16,7 @@ func Start() error {
 	})
 	mux.HandleFunc("GET /admin/metrics", apiCfg.handlerMetrics)
 	mux.HandleFunc("POST /admin/reset", apiCfg.handlerReset)
+	// mux.HandleFunc("POST /api/validate_chirp", apiCfg.handlerValidateChirp)
 
 	newServer := &http.Server{
 		Addr:    ":8080",

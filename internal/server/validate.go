@@ -23,6 +23,12 @@ func (cfg *apiConfig) handlerValidate(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	respBody := map[string]interface{}{"valid": true}
+	params.Body = wordSwapper(params.Body)
+
+	type returnVals struct {
+		CleanedBody string `json:"cleaned_body"`
+	}
+
+	respBody := returnVals{CleanedBody: params.Body}
 	respondWithJSON(w, http.StatusOK, respBody)
 }

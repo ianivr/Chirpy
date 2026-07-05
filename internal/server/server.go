@@ -6,9 +6,9 @@ import (
 	"github.com/ianivr/chirpy/internal/database"
 )
 
-func Start(dbQueries *database.Queries) error {
+func Start(dbQueries *database.Queries, platform string) error {
 	mux := http.NewServeMux()
-	apiCfg := &apiConfig{dbQueries: dbQueries}
+	apiCfg := &apiConfig{dbQueries: dbQueries, platform: platform}
 
 	mux.Handle("/app/", apiCfg.middlewareMetricsInc(http.StripPrefix("/app", http.FileServer(http.Dir("./")))))
 	mux.HandleFunc("GET /api/healthz", func(w http.ResponseWriter, r *http.Request) {
@@ -19,6 +19,7 @@ func Start(dbQueries *database.Queries) error {
 	mux.HandleFunc("GET /admin/metrics", apiCfg.handlerMetrics)
 	mux.HandleFunc("POST /admin/reset", apiCfg.handlerReset)
 	mux.HandleFunc("POST /api/validate_chirp", apiCfg.handlerValidate)
+	mux.HandleFunc("POST /api/users", apiCfg.handlerCreateUser)
 
 	newServer := &http.Server{
 		Addr:    ":8080",

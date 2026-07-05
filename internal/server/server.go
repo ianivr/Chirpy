@@ -2,11 +2,13 @@ package server
 
 import (
 	"net/http"
+
+	"github.com/ianivr/chirpy/internal/database"
 )
 
-func Start() error {
+func Start(dbQueries *database.Queries) error {
 	mux := http.NewServeMux()
-	apiCfg := &apiConfig{}
+	apiCfg := &apiConfig{dbQueries: dbQueries}
 
 	mux.Handle("/app/", apiCfg.middlewareMetricsInc(http.StripPrefix("/app", http.FileServer(http.Dir("./")))))
 	mux.HandleFunc("GET /api/healthz", func(w http.ResponseWriter, r *http.Request) {

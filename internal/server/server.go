@@ -22,6 +22,7 @@ func Start(dbQueries *database.Queries, platform string) error {
 	mux.HandleFunc("POST /admin/reset", apiCfg.handlerReset)
 	mux.HandleFunc("POST /api/users", apiCfg.handlerCreateUser)
 	mux.HandleFunc("POST /api/chirps", apiCfg.handlerCreateChirp)
+	mux.HandleFunc("POST /api/login", apiCfg.handlerLogin)
 
 	newServer := &http.Server{
 		Addr:    ":8080",

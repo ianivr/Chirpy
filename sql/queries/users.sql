@@ -10,3 +10,9 @@ DELETE FROM users;
 
 -- name: GetUserByEmail :one
 SELECT * FROM users WHERE email = $1;
+
+-- name: GetUserFromRefreshToken :one
+SELECT u.*
+FROM users u
+JOIN refresh_tokens rt ON u.id = rt.user_id
+WHERE rt.token = $1 AND rt.expires_at > NOW() AND rt.revoked_at IS NULL;

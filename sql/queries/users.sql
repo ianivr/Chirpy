@@ -16,3 +16,9 @@ SELECT u.*
 FROM users u
 JOIN refresh_tokens rt ON u.id = rt.user_id
 WHERE rt.token = $1 AND rt.expires_at > NOW() AND rt.revoked_at IS NULL;
+
+-- name: UpdateUser :one
+UPDATE users
+SET updated_at = NOW(), email = $2, hashed_password = $3
+WHERE id = $1
+RETURNING *;

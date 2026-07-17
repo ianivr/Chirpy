@@ -16,11 +16,12 @@ func main() {
 	dbURL := os.Getenv("DB_URL")
 	platform := os.Getenv("PLATFORM")
 	secret := os.Getenv("JWT_SECRET")
+	polkaKey := os.Getenv("POLKA_KEY")
 	db, err := sql.Open("postgres", dbURL)
 	if err != nil {
 		log.Fatal(err)
 	}
 	dbQueries := database.New(db)
 
-	log.Fatal(server.Start(dbQueries, platform, secret))
+	log.Fatal(server.Start(dbQueries, platform, secret, polkaKey))
 }

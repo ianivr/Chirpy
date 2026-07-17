@@ -6,9 +6,9 @@ import (
 	"github.com/ianivr/chirpy/internal/database"
 )
 
-func Start(dbQueries *database.Queries, platform string, jwtSecret string) error {
+func Start(dbQueries *database.Queries, platform, jwtSecret, polkaKey string) error {
 	mux := http.NewServeMux()
-	apiCfg := &apiConfig{dbQueries: dbQueries, platform: platform, jwtSecret: jwtSecret}
+	apiCfg := &apiConfig{dbQueries: dbQueries, platform: platform, jwtSecret: jwtSecret, polkaKey: polkaKey}
 
 	mux.Handle("/app/", apiCfg.middlewareMetricsInc(http.StripPrefix("/app", http.FileServer(http.Dir("./")))))
 	mux.HandleFunc("GET /api/healthz", func(w http.ResponseWriter, r *http.Request) {

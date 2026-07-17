@@ -3,6 +3,7 @@ package server
 import (
 	"encoding/json"
 	"net/http"
+	"sort"
 	"time"
 
 	"github.com/google/uuid"
@@ -71,12 +72,13 @@ func (cfg *apiConfig) handlerCreateChirp(w http.ResponseWriter, r *http.Request)
 
 func (cfg *apiConfig) handlerGetChirps(w http.ResponseWriter, r *http.Request) {
 	authorIDParam := r.URL.Query().Get("author_id")
+	sortParam := r.URL.Query().Get("sort")
 
 	var chirps []database.Chirp
 	var err error
 
 	if authorIDParam == "" {
-		chirps, err = cfg.dbQueries.GetChirps(r.Context(), uuid.Nil)
+		chirps, err = cfg.dbQueries.GetChirps(r.Context())
 	} else {
 		authorID, parseErr := uuid.Parse(authorIDParam)
 		if parseErr != nil {
@@ -84,12 +86,21 @@ func (cfg *apiConfig) handlerGetChirps(w http.ResponseWriter, r *http.Request) {
 			return
 		}
 
-		chirps, err = cfg.dbQueries.GetChirps(r.Context(), authorID)
+		chirps, err = cfg.dbQueries.GetChirpsByAuthor(r.Context(), authorID)
 	}
 
 	if err != nil {
 		respondWithError(w, http.StatusInternalServerError, "Failed to get chirps", err)
 		return
+	}
+
+	if sortParam != "" {
+		sort.Slice(chirps, func(i, j int) bool {
+			if sortParam == "desc" {
+				return chirps[i].CreatedAt.After(chirps[j].CreatedAt)
+			}
+			return chirps[i].CreatedAt.Before(chirps[j].CreatedAt)
+		})
 	}
 
 	respBody := make([]Chirp, len(chirps))

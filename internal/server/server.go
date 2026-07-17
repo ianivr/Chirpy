@@ -27,6 +27,7 @@ func Start(dbQueries *database.Queries, platform string, jwtSecret string) error
 	mux.HandleFunc("POST /api/revoke", apiCfg.handlerRevoke)
 	mux.HandleFunc("PUT /api/users", apiCfg.handlerUpdateUser)
 	mux.HandleFunc("DELETE /api/chirps/{chirpID}", apiCfg.handlerDeleteChirp)
+	mux.HandleFunc("POST /api/polka/webhooks", apiCfg.handlerChirpyRed)
 
 	newServer := &http.Server{
 		Addr:    ":8080",
